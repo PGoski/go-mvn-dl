@@ -1,3 +1,3 @@
-module github.com/navdeepsekhon/go-mvn-dl
+module github.com/PGoski/go-mvn-dl
 
 go 1.16
