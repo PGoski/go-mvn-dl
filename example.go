@@ -23,7 +23,8 @@ func main() {
 		"",
 		"",
 		"",
-		"")
+		"",
+		true)
 
 	if err != nil {
 		log.Printf("Error downlaoding.  Error: %s", err)
