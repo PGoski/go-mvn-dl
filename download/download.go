@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 type Artifact struct {
@@ -32,7 +34,7 @@ type Metadata struct {
 	BuildNumber    string `xml:"versioning>snapshot>buildNumber"`
 }
 
-func Download(name, dest, repo, filename, extension, user, pwd string) (string, error) {
+func Download(name, dest, repo, filename, extension, user, pwd string, printProgress bool) (string, error) {
 	a, err := ParseName(name)
 	if err != nil {
 		return "", err
@@ -66,8 +68,15 @@ func Download(name, dest, repo, filename, extension, user, pwd string) (string, 
 		return "", err
 	}
 	defer out.Close()
-
-	_, err = io.Copy(out, resp.Body)
+	if printProgress {
+		bar := progressbar.DefaultBytes(
+			resp.ContentLength,
+			"downloading",
+		)
+		_, err = io.Copy(io.MultiWriter(out, bar), resp.Body)
+	} else {
+		_, err = io.Copy(out, resp.Body)
+	}
 	if err != nil {
 		return "", err
 	}
